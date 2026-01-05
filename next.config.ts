@@ -1,10 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Fix lockfile warning by specifying the correct root
-  outputFileTracingRoot: "/Users/danhyunkim/Desktop/projects/socal-stump-removal",
-
-  // Optional: Enable strict mode for better development
+  // Enable strict mode for better development
   reactStrictMode: true,
 
   // Image optimization - using remotePatterns instead of domains
