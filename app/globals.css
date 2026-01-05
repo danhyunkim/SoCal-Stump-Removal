@@ -3,11 +3,34 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand Colors */
+  --forest-green: #2d5016;
+  --forest-green-light: #3d6b1f;
+  --forest-green-dark: #1d3a0f;
+  --orange: #ff6b35;
+  --orange-light: #ff8555;
+  --orange-dark: #e55520;
+
+  /* UI Colors */
+  --border: #e5e7eb;
+  --input: #f3f4f6;
+  --ring: #2d5016;
+  --radius: 0.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--forest-green);
+  --color-primary-light: var(--forest-green-light);
+  --color-primary-dark: var(--forest-green-dark);
+  --color-accent: var(--orange);
+  --color-accent-light: var(--orange-light);
+  --color-accent-dark: var(--orange-dark);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,11 +39,17 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --border: #262626;
+    --input: #171717;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
 }
