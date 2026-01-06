@@ -100,7 +100,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             </div>
             <div className="flex gap-3">
               <Link href={`#contact`}>
-                <Button size="lg" className="bg-accent hover:bg-accent-dark">
+                <Button size="lg" >
                   Get a Quote
                 </Button>
               </Link>
