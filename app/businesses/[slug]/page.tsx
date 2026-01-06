@@ -5,10 +5,13 @@ import { generateLocalBusinessSchema, generateBreadcrumbSchema } from "@/lib/seo
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, MapPin, Phone, Globe, Clock, Mail, ChevronRight } from "lucide-react";
 import { formatPhoneNumber } from "@/lib/utils";
 import Link from "next/link";
 import { PhotoLightbox } from "@/components/ui/photo-lightbox";
+import { ContactForm } from "@/components/forms/ContactForm";
+import { QuoteForm } from "@/components/forms/QuoteForm";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const business = await getBusinessBySlug(params.slug);
@@ -288,33 +291,58 @@ export default async function BusinessPage({ params }: { params: { slug: string 
           </div>
         </div>
 
-        {/* Contact Form Anchor */}
+        {/* Contact Form Section */}
         <div id="contact" className="mt-12">
           <Card>
             <CardHeader>
-              <CardTitle>Get a Free Quote</CardTitle>
+              <CardTitle>Get in Touch</CardTitle>
+              <p className="text-gray-600 mt-2">
+                Fill out the form below or call {business.phone && formatPhoneNumber(business.phone)} to get started.
+              </p>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4">
-                Contact {business.name} directly for a free, no-obligation quote.
-              </p>
-              <div className="flex gap-4">
-                {business.phone && (
-                  <a href={`tel:${business.phone}`}>
-                    <Button size="lg" className="bg-primary hover:bg-primary-dark">
-                      <Phone className="mr-2 h-5 w-5" />
-                      Call Now
-                    </Button>
-                  </a>
-                )}
-                {business.email && (
-                  <a href={`mailto:${business.email}`}>
-                    <Button size="lg" variant="outline">
-                      <Mail className="mr-2 h-5 w-5" />
-                      Send Email
-                    </Button>
-                  </a>
-                )}
+              <Tabs defaultValue="quote" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="quote">Request a Quote</TabsTrigger>
+                  <TabsTrigger value="contact">Send a Message</TabsTrigger>
+                </TabsList>
+                <TabsContent value="quote" className="mt-6">
+                  <QuoteForm businessId={business.id} businessName={business.name} />
+                </TabsContent>
+                <TabsContent value="contact" className="mt-6">
+                  <ContactForm businessId={business.id} businessName={business.name} />
+                </TabsContent>
+              </Tabs>
+
+              {/* Quick Contact Buttons */}
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm text-gray-600 mb-3">Or reach out directly:</p>
+                <div className="flex flex-wrap gap-3">
+                  {business.phone && (
+                    <a href={`tel:${business.phone}`}>
+                      <Button variant="outline">
+                        <Phone className="mr-2 h-4 w-4" />
+                        Call Now
+                      </Button>
+                    </a>
+                  )}
+                  {business.email && (
+                    <a href={`mailto:${business.email}`}>
+                      <Button variant="outline">
+                        <Mail className="mr-2 h-4 w-4" />
+                        Send Email
+                      </Button>
+                    </a>
+                  )}
+                  {business.website && (
+                    <a href={business.website} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline">
+                        <Globe className="mr-2 h-4 w-4" />
+                        Visit Website
+                      </Button>
+                    </a>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
