@@ -66,41 +66,43 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 bg-gradient-to-br from-amber-50 via-stone-50 to-white">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Top-Rated Stump Removal Services in {cityData.label}
-          </h2>
-          <p className="mt-2 text-gray-600">
-            {businesses.length} {businesses.length === 1 ? "business" : "businesses"} serving {cityData.label}
-          </p>
-        </div>
-
-        {businesses.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {businesses.map((business) => (
-              <BusinessCard key={business.id} business={business} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-              <Building2 className="h-10 w-10 text-primary" />
-            </div>
-            <h3 className="mt-6 text-xl font-semibold text-gray-900">No businesses listed yet</h3>
-            <p className="mt-2 text-gray-600 max-w-md mx-auto">
-              We don't have any stump removal businesses listed in {cityData.label} yet, but we're constantly adding new services.
+      <div className="bg-gradient-to-br from-amber-50 via-stone-50 to-white">
+        <div className="container mx-auto px-4 py-12">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Top-Rated Stump Removal Services in {cityData.label}
+            </h2>
+            <p className="mt-2 text-gray-600">
+              {businesses.length} {businesses.length === 1 ? "business" : "businesses"} serving {cityData.label}
             </p>
-            <div className="mt-6 flex gap-4 justify-center">
-              <Link href="/search">
-                <Button variant="outline">Browse Other Cities</Button>
-              </Link>
-              <Link href="/claim">
-                <Button className="bg-primary hover:bg-primary/90">List Your Business</Button>
-              </Link>
-            </div>
           </div>
-        )}
+
+          {businesses.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {businesses.map((business) => (
+                <BusinessCard key={business.id} business={business} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+                <Building2 className="h-10 w-10 text-primary" />
+              </div>
+              <h3 className="mt-6 text-xl font-semibold text-gray-900">No businesses listed yet</h3>
+              <p className="mt-2 text-gray-600 max-w-md mx-auto">
+                We don't have any stump removal businesses listed in {cityData.label} yet, but we're constantly adding new services.
+              </p>
+              <div className="mt-6 flex gap-4 justify-center">
+                <Link href="/search">
+                  <Button variant="outline">Browse Other Cities</Button>
+                </Link>
+                <Link href="/claim">
+                  <Button className="bg-primary hover:bg-primary/90">List Your Business</Button>
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
