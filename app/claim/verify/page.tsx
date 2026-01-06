@@ -50,8 +50,8 @@ function VerifyClaimPageContent() {
               {status === "loading" && (
                 <>
                   <Loader2 className="h-16 w-16 text-primary animate-spin mb-4" />
-                  <CardTitle>Verifying Your Claim</CardTitle>
-                  <CardDescription>Please wait while we verify your business claim...</CardDescription>
+                  <CardTitle>Verifying Your Business</CardTitle>
+                  <CardDescription>Please wait while we verify your business...</CardDescription>
                 </>
               )}
 

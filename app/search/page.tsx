@@ -53,7 +53,7 @@ export default async function SearchPage({
           </div>
           <h3 className="mt-6 text-xl font-semibold text-gray-900">No results found</h3>
           <p className="mt-2 text-gray-600 max-w-md mx-auto">
-            We couldn't find any businesses matching your criteria. Try adjusting your search or browse all services.
+            We couldn't find any businesses matching your criteria. Try adjusting your search.
           </p>
           <div className="mt-6">
             <Link href="/search">

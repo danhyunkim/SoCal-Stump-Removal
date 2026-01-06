@@ -391,7 +391,7 @@ function ClaimPageContent() {
                           className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors first:rounded-t-md last:rounded-b-md"
                         >
                           <div className="font-medium text-gray-900">{business.name}</div>
-                          <div className="text-sm text-gray-500">{business.city}</div>
+                          <div className="text-sm text-gray-600">{business.city}</div>
                         </button>
                       ))}
                     </div>
@@ -431,7 +431,7 @@ function ClaimPageContent() {
 
               {hasSearched && searchResults.length === 0 && !showAddForm && (
                 <div className="mt-6 text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                  <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <Building2 className="h-12 w-12 text-gray-600 mx-auto mb-3" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     No businesses found
                   </h3>
@@ -652,7 +652,7 @@ function ClaimPageContent() {
                     <div>
                       <Label htmlFor="signin-email">Email</Label>
                       <div className="relative mt-1">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
                         <Input
                           id="signin-email"
                           type="email"
@@ -669,7 +669,7 @@ function ClaimPageContent() {
                     <div>
                       <Label htmlFor="signin-password">Password</Label>
                       <div className="relative mt-1">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
                         <Input
                           id="signin-password"
                           type="password"
@@ -694,7 +694,7 @@ function ClaimPageContent() {
                     <div>
                       <Label htmlFor="signup-name">Full Name</Label>
                       <div className="relative mt-1">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
                         <Input
                           id="signup-name"
                           type="text"
@@ -711,7 +711,7 @@ function ClaimPageContent() {
                     <div>
                       <Label htmlFor="signup-email">Email</Label>
                       <div className="relative mt-1">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
                         <Input
                           id="signup-email"
                           type="email"
@@ -728,7 +728,7 @@ function ClaimPageContent() {
                     <div>
                       <Label htmlFor="signup-password">Password</Label>
                       <div className="relative mt-1">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600" />
                         <Input
                           id="signup-password"
                           type="password"
