@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Building2, Mail, Lock, User } from "lucide-react";
+import { Search, Building2, Mail, Lock, User, Plus, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { signUp, signIn, claimBusiness } from "@/app/actions/auth";
 import { createClient } from "@/lib/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function ClaimPageContent() {
   const searchParams = useSearchParams();
@@ -21,6 +22,8 @@ function ClaimPageContent() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +38,19 @@ function ClaimPageContent() {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Add business form state
+  const [newBusinessData, setNewBusinessData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    website: "",
+    address: "",
+    city: "",
+    county: "Orange County",
+    zip_code: "",
+    description: "",
+  });
 
   useEffect(() => {
     checkUser();
@@ -69,6 +85,8 @@ function ClaimPageContent() {
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
+    setHasSearched(true);
+    setShowAddForm(false);
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -81,9 +99,56 @@ function ClaimPageContent() {
       toast.error("Search failed", { description: error.message });
     } else {
       setSearchResults(data || []);
+      // Pre-fill the add business form with search query
+      if (data && data.length === 0) {
+        setNewBusinessData({ ...newBusinessData, name: searchQuery });
+      }
     }
 
     setIsSearching(false);
+  }
+
+  async function handleAddBusiness(e: React.FormEvent) {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const supabase = createClient();
+
+    // Generate slug from business name
+    const slug = newBusinessData.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    const { data, error } = await supabase
+      .from("businesses")
+      .insert({
+        slug,
+        name: newBusinessData.name,
+        phone: newBusinessData.phone || null,
+        email: newBusinessData.email || null,
+        website: newBusinessData.website || null,
+        address: newBusinessData.address || null,
+        city: newBusinessData.city || null,
+        county: newBusinessData.county || null,
+        zip_code: newBusinessData.zip_code || null,
+        description: newBusinessData.description || null,
+        is_featured: false,
+        is_claimed: false,
+      } as any)
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Failed to add business", { description: error.message });
+    } else if (data) {
+      toast.success("Business added successfully!");
+      setSelectedBusiness(data);
+      setShowAddForm(false);
+      setSearchResults([]);
+    }
+
+    setIsSubmitting(false);
   }
 
   async function handleSignUp(e: React.FormEvent) {
@@ -222,6 +287,181 @@ function ClaimPageContent() {
                   ))}
                 </div>
               )}
+
+              {hasSearched && searchResults.length === 0 && !showAddForm && (
+                <div className="mt-6 text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                  <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    No businesses found
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    We couldn't find "{searchQuery}" in our directory.
+                  </p>
+                  <Button
+                    onClick={() => setShowAddForm(true)}
+                    className="bg-accent hover:bg-accent/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your Business
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Add New Business Form */}
+        {showAddForm && !selectedBusiness && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Plus className="h-5 w-5" />
+                Add Your Business
+              </CardTitle>
+              <CardDescription>
+                Fill in your business details to get started
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleAddBusiness} className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="business-name">Business Name *</Label>
+                    <Input
+                      id="business-name"
+                      value={newBusinessData.name}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, name: e.target.value })}
+                      placeholder="Your Business Name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="business-phone">Phone Number</Label>
+                    <Input
+                      id="business-phone"
+                      type="tel"
+                      value={newBusinessData.phone}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, phone: e.target.value })}
+                      placeholder="(555) 123-4567"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label htmlFor="business-email">Business Email</Label>
+                    <Input
+                      id="business-email"
+                      type="email"
+                      value={newBusinessData.email}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, email: e.target.value })}
+                      placeholder="contact@yourbusiness.com"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="business-website">Website</Label>
+                    <Input
+                      id="business-website"
+                      type="url"
+                      value={newBusinessData.website}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, website: e.target.value })}
+                      placeholder="https://yourbusiness.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="business-address">Street Address</Label>
+                  <Input
+                    id="business-address"
+                    value={newBusinessData.address}
+                    onChange={(e) => setNewBusinessData({ ...newBusinessData, address: e.target.value })}
+                    placeholder="123 Main St"
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <Label htmlFor="business-city">City *</Label>
+                    <Input
+                      id="business-city"
+                      value={newBusinessData.city}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, city: e.target.value })}
+                      placeholder="Anaheim"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="business-county">County</Label>
+                    <Select
+                      value={newBusinessData.county}
+                      onValueChange={(value) => setNewBusinessData({ ...newBusinessData, county: value })}
+                    >
+                      <SelectTrigger id="business-county">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Orange County">Orange County</SelectItem>
+                        <SelectItem value="Los Angeles County">Los Angeles County</SelectItem>
+                        <SelectItem value="San Diego County">San Diego County</SelectItem>
+                        <SelectItem value="Riverside County">Riverside County</SelectItem>
+                        <SelectItem value="San Bernardino County">San Bernardino County</SelectItem>
+                        <SelectItem value="Ventura County">Ventura County</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="business-zip">ZIP Code</Label>
+                    <Input
+                      id="business-zip"
+                      value={newBusinessData.zip_code}
+                      onChange={(e) => setNewBusinessData({ ...newBusinessData, zip_code: e.target.value })}
+                      placeholder="92802"
+                      maxLength={5}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="business-description">Business Description</Label>
+                  <Input
+                    id="business-description"
+                    value={newBusinessData.description}
+                    onChange={(e) => setNewBusinessData({ ...newBusinessData, description: e.target.value })}
+                    placeholder="Tell us about your stump removal services..."
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 bg-accent hover:bg-accent/90"
+                  >
+                    {isSubmitting ? "Adding..." : "Add Business"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setNewBusinessData({
+                        name: "",
+                        phone: "",
+                        email: "",
+                        website: "",
+                        address: "",
+                        city: "",
+                        county: "Orange County",
+                        zip_code: "",
+                        description: "",
+                      });
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         )}
