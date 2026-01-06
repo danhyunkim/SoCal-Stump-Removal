@@ -14,9 +14,10 @@ export default function BusinessCard({ business }: BusinessCardProps) {
 
   return (
     <Link href={`/businesses/${business.slug}`}>
-      <Card className="h-full transition-shadow hover:shadow-lg">
+      <Card className="h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1">
         {business.is_featured && (
-          <div className="bg-accent px-3 py-1">
+          <div className="bg-gradient-to-r from-accent to-accent/90 px-3 py-1.5 flex items-center gap-1.5">
+            <Star className="h-3.5 w-3.5 fill-white text-white" />
             <p className="text-xs font-semibold text-white">
               FEATURED LISTING
             </p>

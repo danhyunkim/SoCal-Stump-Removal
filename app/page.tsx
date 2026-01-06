@@ -24,8 +24,13 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-white py-16 md:py-24">
-        <div className="container">
+      <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 md:py-24 overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
               Find Top-Rated{" "}
@@ -59,13 +64,16 @@ export default async function HomePage() {
 
       {/* Featured Businesses */}
       {featuredBusinesses.length > 0 && (
-        <section className="py-16">
-          <div className="container">
+        <section className="py-16 relative">
+          <div className="container mx-auto px-4">
             <div className="mb-10 text-center">
-              <h2 className="text-3xl font-bold text-gray-900">
-                Featured Stump Removal Services
-              </h2>
-              <p className="mt-3 text-lg text-gray-600">
+              <div className="inline-block">
+                <h2 className="text-3xl font-bold text-gray-900 relative">
+                  Featured Stump Removal Services
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent"></div>
+                </h2>
+              </div>
+              <p className="mt-4 text-lg text-gray-600">
                 Top-rated professionals in your area
               </p>
             </div>
@@ -86,11 +94,17 @@ export default async function HomePage() {
       )}
 
       {/* How It Works */}
-      <section id="how-it-works" className="bg-gray-50 py-16">
-        <div className="container">
+      <section id="how-it-works" className="bg-gray-50 py-16 relative">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+        <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
-            <p className="mt-3 text-lg text-gray-600">
+            <div className="inline-block">
+              <h2 className="text-3xl font-bold text-gray-900 relative">
+                How It Works
+                <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+              </h2>
+            </div>
+            <p className="mt-4 text-lg text-gray-600">
               Find and hire the perfect stump removal service in three easy
               steps
             </p>
@@ -100,7 +114,7 @@ export default async function HomePage() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <Search className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="mt-4 text-xl font-semibold">1. Search & Compare</h3>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900">1. Search & Compare</h3>
               <p className="mt-2 text-gray-600">
                 Browse local stump removal services, read reviews, and compare
                 prices in your area.
@@ -110,7 +124,7 @@ export default async function HomePage() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <Star className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="mt-4 text-xl font-semibold">2. Get Free Quotes</h3>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900">2. Get Free Quotes</h3>
               <p className="mt-2 text-gray-600">
                 Contact multiple businesses directly and request free, no-obligation
                 quotes for your project.
@@ -120,7 +134,7 @@ export default async function HomePage() {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <Clock className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="mt-4 text-xl font-semibold">3. Hire with Confidence</h3>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900">3. Hire with Confidence</h3>
               <p className="mt-2 text-gray-600">
                 Choose the best professional for your needs based on reviews,
                 pricing, and availability.
@@ -132,9 +146,9 @@ export default async function HomePage() {
 
       {/* CTA for Business Owners */}
       <section className="border-t bg-primary py-16 text-white">
-        <div className="container text-center">
+        <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold">Own a Stump Removal Business?</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-primary-light/90">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-white">
             Get more customers by listing your business on SoCal Stump Removal
             Directory. Create your free listing today and start receiving leads.
           </p>

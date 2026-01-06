@@ -5,9 +5,10 @@ import { generateLocalBusinessSchema, generateBreadcrumbSchema } from "@/lib/seo
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, MapPin, Phone, Globe, Clock, Mail } from "lucide-react";
+import { Star, MapPin, Phone, Globe, Clock, Mail, ChevronRight } from "lucide-react";
 import { formatPhoneNumber } from "@/lib/utils";
 import Link from "next/link";
+import { PhotoLightbox } from "@/components/ui/photo-lightbox";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const business = await getBusinessBySlug(params.slug);
@@ -43,16 +44,16 @@ export default async function BusinessPage({ params }: { params: { slug: string 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <div className="container py-8">
+      <div className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
-        <div className="mb-6 text-sm text-gray-600">
-          <Link href="/" className="hover:text-primary">Home</Link>
-          {" / "}
-          <Link href={`/search?location=${business.city}`} className="hover:text-primary">
+        <div className="mb-6 flex items-center gap-2 text-sm text-gray-600">
+          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+          <ChevronRight className="h-4 w-4" />
+          <Link href={`/search?location=${business.city}`} className="hover:text-primary transition-colors">
             {business.city}
           </Link>
-          {" / "}
-          <span className="text-gray-900">{business.name}</span>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-gray-900 font-medium">{business.name}</span>
         </div>
 
         {/* Business Header */}
@@ -106,6 +107,11 @@ export default async function BusinessPage({ params }: { params: { slug: string 
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Photo Gallery */}
+            {business.photos && business.photos.length > 0 && (
+              <PhotoLightbox photos={business.photos} />
+            )}
+
             {/* Description */}
             <Card>
               <CardHeader>

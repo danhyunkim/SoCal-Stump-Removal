@@ -6,6 +6,8 @@ import { SOCAL_CITIES } from "@/lib/constants";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import SearchBar from "@/components/search/SearchBar";
+import { ChevronRight, Building2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export async function generateStaticParams() {
   return SOCAL_CITIES.map((city) => ({
@@ -41,11 +43,11 @@ export default async function CityPage({ params }: { params: { city: string } })
       />
 
       <div className="bg-gradient-to-b from-primary/5 to-white py-12">
-        <div className="container">
-          <div className="mb-6 text-sm text-gray-600">
-            <Link href="/" className="hover:text-primary">Home</Link>
-            {" / "}
-            <span className="text-gray-900">{cityData.label}</span>
+        <div className="container mx-auto px-4">
+          <div className="mb-6 flex items-center gap-2 text-sm text-gray-600">
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-gray-900 font-medium">{cityData.label}</span>
           </div>
 
           <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
@@ -62,7 +64,7 @@ export default async function CityPage({ params }: { params: { city: string } })
         </div>
       </div>
 
-      <div className="container py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900">
             Top-Rated Stump Removal Services in {cityData.label}
@@ -79,10 +81,22 @@ export default async function CityPage({ params }: { params: { city: string } })
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-600">
-              No businesses found in {cityData.label} yet. Check back soon!
+          <div className="text-center py-16">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+              <Building2 className="h-10 w-10 text-primary" />
+            </div>
+            <h3 className="mt-6 text-xl font-semibold text-gray-900">No businesses listed yet</h3>
+            <p className="mt-2 text-gray-600 max-w-md mx-auto">
+              We don't have any stump removal businesses listed in {cityData.label} yet, but we're constantly adding new services.
             </p>
+            <div className="mt-6 flex gap-4 justify-center">
+              <Link href="/search">
+                <Button variant="outline">Browse Other Cities</Button>
+              </Link>
+              <Link href="/claim">
+                <Button className="bg-primary hover:bg-primary/90">List Your Business</Button>
+              </Link>
+            </div>
           </div>
         )}
       </div>

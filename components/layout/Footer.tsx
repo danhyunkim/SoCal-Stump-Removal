@@ -6,10 +6,10 @@ export default function Footer() {
 
   return (
     <footer className="border-t bg-gray-50">
-      <div className="container py-12">
+      <div className="container mx-auto px-4 py-12">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-lg font-semibold">
+            <h3 className="mb-4 text-lg font-semibold text-gray-900">
               SoCal Stump Removal
             </h3>
             <p className="text-sm text-gray-600">

@@ -1,6 +1,9 @@
 import { searchBusinesses } from "@/lib/supabase/queries";
 import BusinessCard from "@/components/business/BusinessCard";
 import { generateSearchMetadata } from "@/lib/seo/metadata";
+import { SearchX } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export async function generateMetadata({
   searchParams
@@ -25,7 +28,7 @@ export default async function SearchPage({
   const { businesses, total } = await searchBusinesses(filters, 20, 0);
 
   return (
-    <div className="container py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           {searchParams.location
@@ -44,10 +47,19 @@ export default async function SearchPage({
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <p className="text-xl text-gray-600">
-            No businesses found. Try adjusting your search criteria.
+        <div className="text-center py-16">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+            <SearchX className="h-10 w-10 text-gray-400" />
+          </div>
+          <h3 className="mt-6 text-xl font-semibold text-gray-900">No results found</h3>
+          <p className="mt-2 text-gray-600 max-w-md mx-auto">
+            We couldn't find any businesses matching your criteria. Try adjusting your search or browse all services.
           </p>
+          <div className="mt-6">
+            <Link href="/search">
+              <Button variant="outline">Browse All Services</Button>
+            </Link>
+          </div>
         </div>
       )}
     </div>
