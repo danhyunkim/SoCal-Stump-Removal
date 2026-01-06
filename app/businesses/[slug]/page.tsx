@@ -79,7 +79,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-lg font-semibold">
+                      <span className="text-lg font-semibold text-gray-900">
                         {business.rating.toFixed(1)}
                       </span>
                     </div>
@@ -305,7 +305,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
               <p className="text-gray-600 mt-2">
-                Fill out the form below or call {business.phone && formatPhoneNumber(business.phone)} to get started.
+                Fill out the form below to get in touch.
               </p>
             </CardHeader>
             <CardContent>
