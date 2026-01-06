@@ -129,7 +129,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 <CardTitle>About</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                   {business.description}
                 </p>
               </CardContent>
@@ -176,13 +176,13 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                               />
                             ))}
                           </div>
-                          <span className="font-medium text-gray-600">{review.author_name}</span>
-                          <span className="text-sm text-gray-600">
+                          <span className="font-medium">{review.author_name}</span>
+                          <span className="text-sm text-gray-500">
                             {new Date(review.created_at).toLocaleDateString()}
                           </span>
                         </div>
                         {review.comment && (
-                          <p className="text-gray-600">{review.comment}</p>
+                          <p className="text-gray-700">{review.comment}</p>
                         )}
                       </div>
                     ))}
@@ -249,7 +249,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                     <MapPin className="h-5 w-5 text-primary mt-0.5" />
                     <div>
                       <p className="text-sm text-gray-600">Address</p>
-                      <p className="font-medium text-gray-600">
+                      <p className="font-medium">
                         {business.address}
                         <br />
                         {business.city}, CA {business.zip_code}
@@ -271,7 +271,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                     {Object.entries(hours).map(([day, time]) => (
                       <div key={day} className="flex justify-between">
                         <span className="text-gray-600">{day}</span>
-                        <span className="font-medium text-gray-600">{time}</span>
+                        <span className="font-medium">{time}</span>
                       </div>
                     ))}
                   </div>
