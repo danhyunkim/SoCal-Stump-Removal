@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,14 @@ function ClaimPageContent() {
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Refs for search suggestions
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Auth form states
   const [signUpData, setSignUpData] = useState({
@@ -59,6 +65,31 @@ function ClaimPageContent() {
     }
   }, [businessId]);
 
+  // Click outside handler for suggestions
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Helper function to capitalize business names
+  function capitalizeBusinessName(name: string): string {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+
   async function checkUser() {
     const supabase = createClient();
     const {
@@ -81,12 +112,41 @@ function ClaimPageContent() {
     }
   }
 
+  async function handleSearchInput(value: string) {
+    setSearchQuery(value);
+
+    // Fetch suggestions as user types
+    if (value.trim().length >= 2) {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("businesses")
+        .select("id, name, city")
+        .or(`name.ilike.%${value}%,city.ilike.%${value}%`)
+        .limit(8);
+
+      if (!error && data) {
+        setSuggestions(data);
+        setShowSuggestions(true);
+      }
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }
+
+  function handleSelectSuggestion(business: any) {
+    setSearchQuery(business.name);
+    setShowSuggestions(false);
+    searchInputRef.current?.focus();
+  }
+
   async function handleSearch() {
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
     setHasSearched(true);
     setShowAddForm(false);
+    setShowSuggestions(false);
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -99,9 +159,10 @@ function ClaimPageContent() {
       toast.error("Search failed", { description: error.message });
     } else {
       setSearchResults(data || []);
-      // Pre-fill the add business form with search query
+      // Pre-fill the add business form with capitalized search query
       if (data && data.length === 0) {
-        setNewBusinessData({ ...newBusinessData, name: searchQuery });
+        const capitalizedName = capitalizeBusinessName(searchQuery);
+        setNewBusinessData({ ...newBusinessData, name: capitalizedName });
       }
     }
 
@@ -114,8 +175,62 @@ function ClaimPageContent() {
 
     const supabase = createClient();
 
+    // Capitalize the business name
+    const capitalizedName = capitalizeBusinessName(newBusinessData.name);
+
+    // Check for duplicates based on name, email, or phone
+    const duplicateChecks = [];
+
+    // Check by name
+    duplicateChecks.push(
+      supabase
+        .from("businesses")
+        .select("id, name")
+        .ilike("name", capitalizedName)
+        .maybeSingle()
+    );
+
+    // Check by email if provided
+    if (newBusinessData.email) {
+      duplicateChecks.push(
+        supabase
+          .from("businesses")
+          .select("id, email")
+          .ilike("email", newBusinessData.email)
+          .maybeSingle()
+      );
+    }
+
+    // Check by phone if provided
+    if (newBusinessData.phone) {
+      duplicateChecks.push(
+        supabase
+          .from("businesses")
+          .select("id, phone")
+          .eq("phone", newBusinessData.phone)
+          .maybeSingle()
+      );
+    }
+
+    const results = await Promise.all(duplicateChecks);
+
+    // Check if any duplicate was found
+    for (let i = 0; i < results.length; i++) {
+      const { data: duplicate, error: checkError } = results[i];
+      if (!checkError && duplicate) {
+        let message = "";
+        if (i === 0) message = "A business with this name already exists";
+        else if (i === 1) message = "A business with this email already exists";
+        else if (i === 2) message = "A business with this phone number already exists";
+
+        toast.error("Business already exists", { description: message });
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
     // Generate slug from business name
-    const slug = newBusinessData.name
+    const slug = capitalizedName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
@@ -124,7 +239,7 @@ function ClaimPageContent() {
       .from("businesses")
       .insert({
         slug,
-        name: newBusinessData.name,
+        name: capitalizedName,
         phone: newBusinessData.phone || null,
         email: newBusinessData.email || null,
         website: newBusinessData.website || null,
@@ -247,14 +362,40 @@ function ClaimPageContent() {
             </CardHeader>
             <CardContent>
               <div className="flex gap-3">
-                <div className="flex-1">
+                <div className="flex-1 relative">
                   <Input
+                    ref={searchInputRef}
                     placeholder="Search for your business name"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleSearchInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    onFocus={() => {
+                      if (searchQuery.trim().length >= 2 && suggestions.length > 0) {
+                        setShowSuggestions(true);
+                      }
+                    }}
                     className="text-primary placeholder:text-primary/70"
                   />
+
+                  {/* Search Suggestions Dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div
+                      ref={suggestionsRef}
+                      className="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg max-h-60 overflow-auto"
+                    >
+                      {suggestions.map((business) => (
+                        <button
+                          key={business.id}
+                          type="button"
+                          onClick={() => handleSelectSuggestion(business)}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors first:rounded-t-md last:rounded-b-md"
+                        >
+                          <div className="font-medium text-gray-900">{business.name}</div>
+                          <div className="text-sm text-gray-500">{business.city}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <Button onClick={handleSearch} disabled={isSearching} className="bg-accent hover:bg-accent/90">
                   <Search className="h-4 w-4 mr-2" />
@@ -336,26 +477,28 @@ function ClaimPageContent() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="business-phone">Phone Number</Label>
+                    <Label htmlFor="business-phone">Phone Number *</Label>
                     <Input
                       id="business-phone"
                       type="tel"
                       value={newBusinessData.phone}
                       onChange={(e) => setNewBusinessData({ ...newBusinessData, phone: e.target.value })}
                       placeholder="(555) 123-4567"
+                      required
                     />
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <Label htmlFor="business-email">Business Email</Label>
+                    <Label htmlFor="business-email">Business Email *</Label>
                     <Input
                       id="business-email"
                       type="email"
                       value={newBusinessData.email}
                       onChange={(e) => setNewBusinessData({ ...newBusinessData, email: e.target.value })}
                       placeholder="contact@yourbusiness.com"
+                      required
                     />
                   </div>
                   <div>
