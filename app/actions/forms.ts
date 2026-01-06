@@ -5,7 +5,7 @@ import { Resend } from "resend";
 import { ContactEmail, QuoteEmail } from "@/lib/email/templates";
 import type { Business } from "@/lib/supabase/types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 interface ContactFormData {
   businessId: string;
@@ -72,20 +72,24 @@ export async function submitContactForm(data: ContactFormData) {
 
     // Send email to business owner
     try {
-      await resend.emails.send({
-        from: "SoCal Stump Removal <noreply@yourdomain.com>", // Update with your verified domain
-        to: business.email,
-        replyTo: data.email,
-        subject: `New Contact Form from ${data.name}`,
-        react: ContactEmail({
-          businessName: business.name,
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          serviceType: data.serviceType,
-          message: data.message,
-        }),
-      });
+      if (resend) {
+        await resend.emails.send({
+          from: "SoCal Stump Removal <noreply@yourdomain.com>", // Update with your verified domain
+          to: business.email,
+          replyTo: data.email,
+          subject: `New Contact Form from ${data.name}`,
+          react: ContactEmail({
+            businessName: business.name,
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            serviceType: data.serviceType,
+            message: data.message,
+          }),
+        });
+      } else {
+        console.warn("Resend API key not configured. Email not sent.");
+      }
     } catch (emailError) {
       console.error("Error sending email:", emailError);
       // Don't fail the request if email fails
@@ -146,23 +150,27 @@ export async function submitQuoteForm(data: QuoteFormData) {
 
     // Send email to business owner
     try {
-      await resend.emails.send({
-        from: "SoCal Stump Removal <noreply@yourdomain.com>", // Update with your verified domain
-        to: business.email,
-        replyTo: data.email,
-        subject: `New Quote Request from ${data.name}`,
-        react: QuoteEmail({
-          businessName: business.name,
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          serviceType: data.serviceType,
-          propertySize: data.propertySize,
-          stumpCount: data.stumpCount,
-          urgency: data.urgency,
-          message: data.message,
-        }),
-      });
+      if (resend) {
+        await resend.emails.send({
+          from: "SoCal Stump Removal <noreply@yourdomain.com>", // Update with your verified domain
+          to: business.email,
+          replyTo: data.email,
+          subject: `New Quote Request from ${data.name}`,
+          react: QuoteEmail({
+            businessName: business.name,
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            serviceType: data.serviceType,
+            propertySize: data.propertySize,
+            stumpCount: data.stumpCount,
+            urgency: data.urgency,
+            message: data.message,
+          }),
+        });
+      } else {
+        console.warn("Resend API key not configured. Email not sent.");
+      }
     } catch (emailError) {
       console.error("Error sending email:", emailError);
       // Don't fail the request if email fails

@@ -7,7 +7,7 @@ import { generateVerificationToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import type { Business, BusinessClaim } from "@/lib/supabase/types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 interface SignUpData {
   email: string;
@@ -192,6 +192,14 @@ export async function claimBusiness(data: ClaimBusinessData) {
     const verificationUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/claim/verify?token=${verificationToken}`;
 
     try {
+      if (!resend) {
+        console.warn("Resend API key not configured. Email not sent.");
+        return {
+          success: true,
+          message: "Claim submitted successfully. Email notifications are currently disabled.",
+        };
+      }
+
       await resend.emails.send({
         from: "SoCal Stump Removal <noreply@yourdomain.com>", // Update with your verified domain
         to: business.email,
