@@ -16,12 +16,6 @@ export default function Header() {
           </Link>
           <nav className="hidden gap-6 md:flex">
             <Link
-              href="/search"
-              className="text-sm font-medium text-primary transition-colors hover:text-accent"
-            >
-              Find Services
-            </Link>
-            <Link
               href="/#how-it-works"
               className="text-sm font-medium text-primary transition-colors hover:text-accent"
             >

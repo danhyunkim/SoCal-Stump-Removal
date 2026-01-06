@@ -75,7 +75,7 @@ export default function SearchBar() {
                 setShowSuggestions(true);
               }
             }}
-            className="h-12 pr-4 placeholder:text-primary/70"
+            className="h-12 pr-4 text-primary placeholder:text-primary/70"
           />
 
           {/* Autocomplete Suggestions */}

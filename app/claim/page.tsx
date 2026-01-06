@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { signUp, signIn, claimBusiness } from "@/app/actions/auth";
 import { createClient } from "@/lib/supabase/client";
 
-export default function ClaimPage() {
+function ClaimPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const businessId = searchParams.get("business");
@@ -153,14 +153,20 @@ export default function ClaimPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Claim Your Business</h1>
-          <p className="text-lg text-gray-600">
-            Take control of your business listing and start managing leads
-          </p>
-        </div>
+    <div className="relative bg-gradient-to-br from-amber-50 via-stone-50 to-white py-12">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-100 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Claim Your Business</h1>
+            <p className="text-lg text-gray-600">
+              Take control of your business listing and start managing leads
+            </p>
+          </div>
 
         {/* Step 1: Search for business */}
         {!selectedBusiness && (
@@ -171,7 +177,7 @@ export default function ClaimPage() {
                 Step 1: Find Your Business
               </CardTitle>
               <CardDescription>
-                Search for your business in our directory
+                Search for your business name
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -182,9 +188,10 @@ export default function ClaimPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    className="text-primary placeholder:text-primary/70"
                   />
                 </div>
-                <Button onClick={handleSearch} disabled={isSearching}>
+                <Button onClick={handleSearch} disabled={isSearching} className="bg-accent hover:bg-accent/90">
                   <Search className="h-4 w-4 mr-2" />
                   {isSearching ? "Searching..." : "Search"}
                 </Button>
@@ -353,7 +360,7 @@ export default function ClaimPage() {
                         />
                       </div>
                       <p className="text-xs text-gray-500 mt-1">
-                        Minimum 6 characters
+                        Minimum 8 characters
                       </p>
                     </div>
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -381,7 +388,7 @@ export default function ClaimPage() {
             <CardContent>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <p className="text-sm text-blue-900">
-                  A verification email will be sent to the business email address on file. Please
+                  A verification email will be sent to the business email address you signed up with. Please
                   make sure you have access to this email.
                 </p>
               </div>
@@ -403,7 +410,22 @@ export default function ClaimPage() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function ClaimPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <ClaimPageContent />
+    </Suspense>
   );
 }

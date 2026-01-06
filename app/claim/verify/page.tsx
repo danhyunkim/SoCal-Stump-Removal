@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { verifyBusinessClaim } from "@/app/actions/auth";
 
-export default function VerifyClaimPage() {
+function VerifyClaimPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token");
@@ -134,5 +134,26 @@ export default function VerifyClaimPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function VerifyClaimPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col items-center text-center">
+                <Loader2 className="h-16 w-16 text-primary animate-spin mb-4" />
+                <CardTitle>Loading...</CardTitle>
+              </div>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
+    }>
+      <VerifyClaimPageContent />
+    </Suspense>
   );
 }
