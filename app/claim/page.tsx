@@ -172,7 +172,7 @@ function ClaimPageContent() {
         {!selectedBusiness && (
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-primary">
                 <Building2 className="h-5 w-5" />
                 Step 1: Find Your Business
               </CardTitle>
@@ -184,7 +184,7 @@ function ClaimPageContent() {
               <div className="flex gap-3">
                 <div className="flex-1">
                   <Input
-                    placeholder="Search by business name or city..."
+                    placeholder="Search for your business name"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch()}

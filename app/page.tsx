@@ -70,7 +70,7 @@ export default async function HomePage() {
               <div className="inline-block">
                 <h2 className="text-3xl font-bold text-gray-900 relative">
                   Featured Stump Removal Services
-                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
                 </h2>
               </div>
               <p className="mt-4 text-lg text-gray-600">
@@ -156,8 +156,7 @@ export default async function HomePage() {
             <Link href="/claim">
               <Button
                 size="lg"
-                variant="secondary"
-                className="bg-white text-primary hover:bg-gray-100"
+                className="bg-accent text-white hover:bg-accent/90"
               >
                 List Your Business Free
               </Button>
