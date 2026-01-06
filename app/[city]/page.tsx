@@ -15,14 +15,16 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { city: string } }) {
-  const cityData = SOCAL_CITIES.find((c) => c.value === params.city);
+export async function generateMetadata({ params }: { params: Promise<{ city: string }> }) {
+  const { city } = await params;
+  const cityData = SOCAL_CITIES.find((c) => c.value === city);
   if (!cityData) return {};
   return generateCityPageMetadata(cityData.label, cityData.county);
 }
 
-export default async function CityPage({ params }: { params: { city: string } }) {
-  const cityData = SOCAL_CITIES.find((c) => c.value === params.city);
+export default async function CityPage({ params }: { params: Promise<{ city: string }> }) {
+  const { city } = await params;
+  const cityData = SOCAL_CITIES.find((c) => c.value === city);
 
   if (!cityData) {
     notFound();
@@ -32,7 +34,7 @@ export default async function CityPage({ params }: { params: { city: string } })
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "/" },
-    { name: cityData.label, url: `/${params.city}` },
+    { name: cityData.label, url: `/${city}` },
   ]);
 
   return (

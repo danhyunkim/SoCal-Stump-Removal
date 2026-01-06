@@ -13,14 +13,16 @@ import { PhotoLightbox } from "@/components/ui/photo-lightbox";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { QuoteForm } from "@/components/forms/QuoteForm";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const business = await getBusinessBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const business = await getBusinessBySlug(slug);
   if (!business) return {};
   return generateBusinessMetadata(business);
 }
 
-export default async function BusinessPage({ params }: { params: { slug: string } }) {
-  const business = await getBusinessBySlug(params.slug);
+export default async function BusinessPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const business = await getBusinessBySlug(slug);
 
   if (!business) {
     notFound();
