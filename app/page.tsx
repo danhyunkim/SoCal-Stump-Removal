@@ -64,7 +64,7 @@ export default async function HomePage() {
 
       {/* Featured Businesses */}
       {featuredBusinesses.length > 0 && (
-        <section className="py-16 relative">
+        <section className="py-16 relative bg-gradient-to-br from-amber-50 via-stone-50 to-white">
           <div className="container mx-auto px-4">
             <div className="mb-10 text-center">
               <div className="inline-block">
