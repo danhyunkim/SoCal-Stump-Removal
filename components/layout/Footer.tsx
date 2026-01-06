@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SOCAL_CITIES } from "@/lib/constants";
 
 export default function Footer() {
-  const popularCities = SOCAL_CITIES.slice(0, 12);
+  const popularCities = SOCAL_CITIES.slice(0, 10);
 
   return (
     <footer className="border-t bg-gray-50">
