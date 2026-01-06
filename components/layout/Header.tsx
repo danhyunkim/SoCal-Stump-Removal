@@ -10,20 +10,20 @@ export default function Header() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <span className="text-xl font-bold text-white">SC</span>
             </div>
-            <span className="hidden font-bold sm:inline-block">
+            <span className="hidden font-bold text-primary sm:inline-block">
               SoCal Stump Removal
             </span>
           </Link>
           <nav className="hidden gap-6 md:flex">
             <Link
               href="/search"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium text-primary transition-colors hover:text-accent"
             >
               Find Services
             </Link>
             <Link
               href="/#how-it-works"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium text-primary transition-colors hover:text-accent"
             >
               How It Works
             </Link>
