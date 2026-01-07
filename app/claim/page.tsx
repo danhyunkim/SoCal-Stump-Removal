@@ -374,7 +374,7 @@ function ClaimPageContent() {
                         setShowSuggestions(true);
                       }
                     }}
-                    className="text-primary placeholder:text-primary/70"
+                    className="text-gray-700 placeholder:text-gray-600"
                   />
 
                   {/* Search Suggestions Dropdown */}
@@ -683,7 +683,7 @@ function ClaimPageContent() {
                         />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
                       {isSubmitting ? "Signing in..." : "Sign In"}
                     </Button>
                   </form>
@@ -746,7 +746,7 @@ function ClaimPageContent() {
                         Minimum 8 characters
                       </p>
                     </div>
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
                       {isSubmitting ? "Creating account..." : "Create Account"}
                     </Button>
                   </form>

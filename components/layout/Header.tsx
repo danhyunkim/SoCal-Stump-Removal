@@ -30,7 +30,7 @@ export default function Header() {
             </Button>
           </Link>
           <Link href="/dashboard">
-            <Button size="sm" className="bg-primary hover:bg-primary-dark">
+            <Button size="sm">
               Sign In
             </Button>
           </Link>

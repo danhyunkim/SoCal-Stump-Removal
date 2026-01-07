@@ -12,6 +12,7 @@ export default function SearchBar() {
   const [city, setCity] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredCities, setFilteredCities] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +35,7 @@ export default function SearchBar() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCity(value);
+    setSelectedIndex(-1);
 
     if (value.trim()) {
       const filtered = CALIFORNIA_CITIES.filter((c) =>
@@ -50,7 +52,37 @@ export default function SearchBar() {
   const handleSelectCity = (selectedCity: string) => {
     setCity(selectedCity);
     setShowSuggestions(false);
+    setSelectedIndex(-1);
     inputRef.current?.focus();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || filteredCities.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setSelectedIndex((prev) =>
+          prev < filteredCities.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          handleSelectCity(filteredCities[selectedIndex]);
+        } else {
+          handleSearch(e as any);
+        }
+        break;
+      case "Escape":
+        setShowSuggestions(false);
+        setSelectedIndex(-1);
+        break;
+    }
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -70,12 +102,13 @@ export default function SearchBar() {
             placeholder="Search by city"
             value={city}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             onFocus={() => {
               if (city.trim() && filteredCities.length > 0) {
                 setShowSuggestions(true);
               }
             }}
-            className="h-12 pr-4 text-primary placeholder:text-primary/70"
+            className="h-12 pr-4 text-gray-700 placeholder:text-gray-600"
           />
 
           {/* Autocomplete Suggestions */}
@@ -84,12 +117,16 @@ export default function SearchBar() {
               ref={suggestionsRef}
               className="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg max-h-60 overflow-auto"
             >
-              {filteredCities.map((suggestedCity) => (
+              {filteredCities.map((suggestedCity, index) => (
                 <button
                   key={suggestedCity}
                   type="button"
                   onClick={() => handleSelectCity(suggestedCity)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-gray-900 first:rounded-t-md last:rounded-b-md"
+                  className={`w-full px-4 py-2 text-left transition-colors text-gray-900 first:rounded-t-md last:rounded-b-md ${
+                    index === selectedIndex
+                      ? "bg-primary/10 border-l-2 border-primary"
+                      : "hover:bg-gray-100"
+                  }`}
                 >
                   {suggestedCity}
                 </button>
