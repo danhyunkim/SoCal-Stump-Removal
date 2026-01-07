@@ -46,3 +46,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Import script outputs
+import_unique.json
+import_publishable.json
+import_dupes.json
