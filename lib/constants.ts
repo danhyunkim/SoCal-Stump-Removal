@@ -71,6 +71,9 @@ export const RATING_FILTERS = [
   { value: "2", label: "2+ Stars" },
 ];
 
+// SEO Configuration
+export const MIN_BUSINESSES_TO_INDEX = 3;
+
 // Default metadata
 export const SITE_NAME = "SoCal Stump Removal Directory";
 export const SITE_DESCRIPTION = "Find the best tree stump removal services in Southern California. Compare local professionals, read reviews, and get free quotes.";

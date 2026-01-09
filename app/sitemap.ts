@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
-import { getAllBusinessSlugs } from "@/lib/supabase/queries";
-import { SOCAL_CITIES, SITE_URL } from "@/lib/constants";
+import { getAllBusinessSlugsBuildTime } from "@/lib/supabase/queries";
+import { SITE_URL } from "@/lib/constants";
+import { getIndexableCitiesBuildTime } from "@/lib/seo/city-helpers";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const businessSlugs = await getAllBusinessSlugs();
+  const businessSlugs = await getAllBusinessSlugsBuildTime();
 
   const businesses: MetadataRoute.Sitemap = businessSlugs.map((slug) => ({
     url: `${SITE_URL}/businesses/${slug}`,
@@ -12,8 +13,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const cities: MetadataRoute.Sitemap = SOCAL_CITIES.map((city) => ({
-    url: `${SITE_URL}/${city.value}`,
+  // Only include cities that meet the indexing threshold (≥3 businesses)
+  // Use build-time version to avoid cookies error
+  const indexableCities = await getIndexableCitiesBuildTime();
+  const cities: MetadataRoute.Sitemap = indexableCities.map((city) => ({
+    url: `${SITE_URL}/${city.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly",
     priority: 0.7,

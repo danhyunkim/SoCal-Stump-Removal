@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { Database } from "./types";
+import { createClient as createBrowserClient } from "@supabase/supabase-js";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -26,5 +27,16 @@ export async function createClient() {
         },
       },
     }
+  );
+}
+
+/**
+ * Creates a Supabase client for build-time usage (e.g., generateStaticParams)
+ * This doesn't use cookies and is suitable for static site generation
+ */
+export function createBuildTimeClient() {
+  return createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 }

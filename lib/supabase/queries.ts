@@ -132,6 +132,47 @@ export async function getBusinessesByCity(
   }));
 }
 
+/**
+ * Get business count for a city (matches getBusinessesByCity logic exactly)
+ * Uses same .or() logic: city match OR service_areas contains city
+ */
+export async function getBusinessCountByCity(city: string): Promise<number> {
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from("businesses")
+    .select("*", { count: "exact", head: true })
+    .or(`city.ilike.${city},service_areas.cs.["${city}"]`);
+
+  if (error) {
+    console.error(`Error counting businesses for ${city}:`, error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+/**
+ * Build-time version of getBusinessCountByCity for use in sitemap/generateStaticParams
+ * This doesn't use cookies and is suitable for static site generation
+ */
+export function getBusinessCountByCityBuildTime(city: string): Promise<number> {
+  const { createBuildTimeClient } = require("./server");
+  const supabase = createBuildTimeClient();
+
+  return supabase
+    .from("businesses")
+    .select("*", { count: "exact", head: true })
+    .or(`city.ilike.${city},service_areas.cs.["${city}"]`)
+    .then(({ count, error }: { count: number | null; error: any }) => {
+      if (error) {
+        console.error(`Error counting businesses for ${city}:`, error);
+        return 0;
+      }
+      return count || 0;
+    });
+}
+
 export async function getFeaturedBusinesses(
   limit: number = 6
 ): Promise<BusinessWithDetails[]> {
@@ -226,6 +267,25 @@ export async function getAllBusinessSlugs(): Promise<string[]> {
   return (data as any[]).map((b) => b.slug);
 }
 
+/**
+ * Build-time version of getAllBusinessSlugs for use in sitemap/generateStaticParams
+ * This doesn't use cookies and is suitable for static site generation
+ */
+export function getAllBusinessSlugsBuildTime(): Promise<string[]> {
+  const { createBuildTimeClient } = require("./server");
+  const supabase = createBuildTimeClient();
+
+  return supabase
+    .from("businesses")
+    .select("slug")
+    .then(({ data, error }: { data: any; error: any }) => {
+      if (error || !data) {
+        return [];
+      }
+      return (data as any[]).map((b: any) => b.slug);
+    });
+}
+
 export async function getBusinessesByOwner(
   ownerId: string
 ): Promise<Business[]> {
@@ -262,4 +322,102 @@ export async function getFormSubmissionsForBusiness(
   }
 
   return data;
+}
+
+/**
+ * Get distinct cities with inventory for auto-generating city pages
+ * Returns cities with at least minCount businesses
+ */
+export async function getDistinctCitiesWithInventory(
+  minCount: number = 1
+): Promise<Array<{ city: string; count: number; county?: string }>> {
+  const supabase = await createClient();
+
+  // Get all businesses with city data
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("city, county")
+    .not("city", "is", null);
+
+  if (error || !data) {
+    return [];
+  }
+
+  // Count cities manually (Supabase doesn't support GROUP BY in select)
+  const cityCountMap = new Map<string, { count: number; county?: string }>();
+
+  data.forEach((business: any) => {
+    const cityName = business.city?.trim();
+    if (!cityName) return;
+
+    const existing = cityCountMap.get(cityName);
+    if (existing) {
+      existing.count++;
+    } else {
+      cityCountMap.set(cityName, {
+        count: 1,
+        county: business.county || undefined,
+      });
+    }
+  });
+
+  // Filter by minCount and convert to array
+  return Array.from(cityCountMap.entries())
+    .filter(([_, data]) => data.count >= minCount)
+    .map(([city, data]) => ({
+      city,
+      count: data.count,
+      county: data.county,
+    }))
+    .sort((a, b) => b.count - a.count); // Sort by count descending
+}
+
+/**
+ * Build-time version of getDistinctCitiesWithInventory for use in generateStaticParams
+ * This doesn't use cookies and is suitable for static site generation
+ */
+export function getDistinctCitiesWithInventoryBuildTime(
+  minCount: number = 1
+): Promise<Array<{ city: string; count: number; county?: string }>> {
+  const { createBuildTimeClient } = require("./server");
+  const supabase = createBuildTimeClient();
+
+  // Get all businesses with city data
+  return supabase
+    .from("businesses")
+    .select("city, county")
+    .not("city", "is", null)
+    .then(({ data, error }: { data: any; error: any }) => {
+      if (error || !data) {
+        return [];
+      }
+
+      // Count cities manually (Supabase doesn't support GROUP BY in select)
+      const cityCountMap = new Map<string, { count: number; county?: string }>();
+
+      data.forEach((business: any) => {
+        const cityName = business.city?.trim();
+        if (!cityName) return;
+
+        const existing = cityCountMap.get(cityName);
+        if (existing) {
+          existing.count++;
+        } else {
+          cityCountMap.set(cityName, {
+            count: 1,
+            county: business.county || undefined,
+          });
+        }
+      });
+
+      // Filter by minCount and convert to array
+      return Array.from(cityCountMap.entries())
+        .filter(([_, data]) => data.count >= minCount)
+        .map(([city, data]) => ({
+          city,
+          count: data.count,
+          county: data.county,
+        }))
+        .sort((a, b) => b.count - a.count); // Sort by count descending
+    });
 }

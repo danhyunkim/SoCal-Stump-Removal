@@ -75,7 +75,8 @@ export function generateBusinessMetadata(business: Business): Metadata {
 
 export function generateCityPageMetadata(
   city: string,
-  county: string
+  county: string,
+  shouldIndex: boolean = true
 ): Metadata {
   const title = `Tree Stump Removal in ${city}, California`;
   const description = `Find the best tree stump removal services in ${city}, ${county}. Compare local professionals, read reviews, and get free quotes from verified companies.`;
@@ -83,6 +84,15 @@ export function generateCityPageMetadata(
   return {
     title,
     description,
+    robots: shouldIndex
+      ? {
+          index: true,
+          follow: true,
+        }
+      : {
+          index: false,
+          follow: true,
+        },
     openGraph: {
       type: "website",
       url: `${SITE_URL}/${city.toLowerCase().replace(/\s+/g, "-")}`,
