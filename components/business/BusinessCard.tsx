@@ -30,7 +30,7 @@ export default function BusinessCard({ business }: BusinessCardProps) {
                 {business.name}
               </h3>
               <div className="mt-1 flex items-center gap-2">
-                {business.review_count > 0 && (
+                {business.review_count > 0 && business.rating !== null && (
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm font-medium">

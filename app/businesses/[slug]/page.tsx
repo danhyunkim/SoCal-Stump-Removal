@@ -75,7 +75,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 {business.name}
               </h1>
               <div className="mt-3 flex flex-wrap items-center gap-4">
-                {business.review_count > 0 && (
+                {business.review_count > 0 && business.rating !== null && (
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-1">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />

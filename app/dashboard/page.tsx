@@ -132,7 +132,7 @@ export default async function DashboardPage() {
               <div className="flex items-center gap-2 mt-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-semibold">
-                  {business.rating.toFixed(1)}
+                  {business.rating !== null ? business.rating.toFixed(1) : "N/A"}
                 </span>
                 <span className="text-sm text-gray-500">
                   ({business.review_count} reviews)
